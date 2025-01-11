@@ -1,0 +1,11 @@
+section {
+  @apply p-4;
+}
+
+.centered-section {
+  @apply h-dvh flex items-center justify-center flex-col;
+}
+
+.heading-1 {
+  @apply font-bold text-xl text-center mb-5;
+}

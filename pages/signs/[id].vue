@@ -1,5 +1,5 @@
 <template>
-  <section class="pt-20">
+  <section class="py-20">
     <div v-if="!groupData" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
     <div v-else>
       <div v-for="(value, key) in groupData" :key="key" class="mb-6 flex items-center gap-3">
@@ -34,7 +34,7 @@ const header = useState('header');
 const groupData = ref<SignGroup | null>(null);
 
 async function loadData() {
-  const data = await import(`~/assets/signs/${route.params.id}.json`);
+  const data = await import((`~/assets/data/signs/${route.params.id}.json`));
   groupData.value = data.signs;
   header.value = { title: data.groupName, link: '/signs' };
 }

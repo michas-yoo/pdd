@@ -1,9 +1,7 @@
 <template>
-  <section class="h-svh pt-20">
+  <section class="centered-section h-svh py-20">
     <div class="grid grid-cols-1 gap-3">
-      <TheButton class="mb-5" @click="navigateTo('/signs/popular')"> Самые популярные </TheButton>
-
-      <TheButton v-for="(category, i) in categories" :key="i" @click="() => navigateTo(`/signs/${i + 1}`)">
+      <TheButton v-for="(category, i) in categories" :key="i" @click="() => navigateTo(`/lines/${i + 1}`)">
         {{ category }}
       </TheButton>
     </div>

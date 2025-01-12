@@ -1,5 +1,5 @@
 <template>
-  <section class="h-svh pt-20">
+  <section class="centered-section py-20">
     <div class="grid grid-cols-1 gap-3">
       <TheButton class="mb-5" @click="navigateTo('/signs/popular')"> Самые популярные</TheButton>
 

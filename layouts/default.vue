@@ -1,5 +1,5 @@
 <template>
-  <main class="pb-20">
+  <main>
     <header
       v-if="canShowNavigation"
       :class="['fixed left-0 top-0 w-full border-b bg-white p-2 text-center', 'flex items-center justify-between']"

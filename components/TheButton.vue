@@ -1,18 +1,13 @@
 <template>
-	<button
-		class="w-full py-3 px-5 rounded-[10px] border border-black"
-		:class="props.class"
-	>
-		<slot />
-	</button>
+  <button class="w-full rounded-[10px] border border-black px-5 py-3" :class="props.class">
+    <slot />
+  </button>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-	class?: string
+  class?: string;
 }>();
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

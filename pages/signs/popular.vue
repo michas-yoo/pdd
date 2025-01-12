@@ -1,11 +1,7 @@
 <template>
-	<section>most popular</section>
+  <section>most popular</section>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

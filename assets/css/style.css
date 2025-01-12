@@ -3,9 +3,9 @@ section {
 }
 
 .centered-section {
-  @apply h-dvh flex items-center justify-center flex-col;
+  @apply flex h-dvh flex-col items-center justify-center;
 }
 
 .heading-1 {
-  @apply font-bold text-xl text-center mb-5;
+  @apply mb-5 text-center text-xl font-bold;
 }

@@ -1,8 +1,10 @@
 <template>
-	<section class="h-svh">
-		<h1 class="heading-1">Знаки</h1>
-
+	<section class="h-svh pt-20">
 		<div class="grid grid-cols-1 gap-3">
+			<TheButton class="mb-5" @click="navigateTo('/signs/popular')">
+				Самые популярные
+			</TheButton>
+
 			<TheButton
 				v-for="(category, i) in categories"
 				:key="i"

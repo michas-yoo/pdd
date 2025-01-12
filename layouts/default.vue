@@ -38,10 +38,6 @@ const FOOTER_NAVIGATION: NavigationItem[] = [
     path: '/quiz',
   },
   {
-    title: 'Ошибки',
-    path: '/mistakes',
-  },
-  {
     title: 'Избранное',
     path: '/favourites',
   },

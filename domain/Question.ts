@@ -30,45 +30,51 @@ type SignQuestion = BaseQuestion<Sign['number'] | Sign['title'], Sign['number'] 
 
 export type Question = SignQuestion | LineQuestion;
 
+const keyToKeyConstructor = (sign: Sign, questionAsImage: boolean): SignQuestion => ({
+  question: sign.number,
+  answers: [sign.number],
+  correctAnswer: sign.number,
+  skip: sign.skip || [],
+  type: QuestionType.SignQuestion,
+  questionAsImage,
+  answersAsImages: !questionAsImage,
+  signQuestionType: SignQuestionType.KeyToKey,
+});
+
+const keyToTitleConstructor = (sign: Sign, questionAsImage: boolean): SignQuestion => ({
+    question: sign.number,
+    answers: [sign.title],
+    correctAnswer: sign.title,
+    skip: sign.skip || [],
+    type: QuestionType.SignQuestion,
+    questionAsImage,
+    answersAsImages: false,
+    signQuestionType: SignQuestionType.KeyToTitle,
+});
+
+const titleToKeyConstructor = (sign: Sign): SignQuestion => ({
+  question: sign.title,
+  answers: [sign.number],
+  correctAnswer: sign.number,
+  skip: sign.skip || [],
+  type: QuestionType.SignQuestion,
+  questionAsImage: false,
+  answersAsImages: Math.random() > 0.5,
+  signQuestionType: SignQuestionType.TitleToKey,
+});
+
 function getSignQuestion(sign: Sign): SignQuestion {
   const questionType = getRndNumber(0, 2);
   const questionAsImage = Math.random() > 0.5;
+  const lookupTable: {
+    [key: number]: () => SignQuestion;
+  } = {
+    [SignQuestionType.KeyToKey]: () => keyToKeyConstructor(sign, questionAsImage),
+    [SignQuestionType.KeyToTitle]: () => keyToTitleConstructor(sign, questionAsImage),
+    [SignQuestionType.TitleToKey]: () => titleToKeyConstructor(sign),
+  };
 
-  switch (questionType) {
-    case 0: // KeyToKey
-      return {
-        question: sign.number,
-        answers: [sign.number],
-        correctAnswer: sign.number,
-        skip: sign.skip || [],
-        type: QuestionType.SignQuestion,
-        questionAsImage,
-        answersAsImages: !questionAsImage,
-        signQuestionType: SignQuestionType.KeyToKey,
-      };
-    case 1: // KeyToTitle
-      return {
-        question: sign.number,
-        answers: [sign.title],
-        correctAnswer: sign.title,
-        skip: sign.skip || [],
-        type: QuestionType.SignQuestion,
-        questionAsImage,
-        answersAsImages: false,
-        signQuestionType: SignQuestionType.KeyToTitle,
-      };
-    default: // TitleToKey
-      return {
-        question: sign.title,
-        answers: [sign.number],
-        correctAnswer: sign.number,
-        skip: sign.skip || [],
-        type: QuestionType.SignQuestion,
-        questionAsImage: false,
-        answersAsImages: Math.random() > 0.5,
-        signQuestionType: SignQuestionType.TitleToKey,
-      };
-  }
+  return lookupTable[questionType]();
 }
 
 function getLineQuestion(line: Line): LineQuestion {

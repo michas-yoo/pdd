@@ -4,7 +4,7 @@
     <div class="grid w-full grid-cols-1 gap-3 px-4">
       <TheButton @click="() => navigateTo('/learn')">Учить</TheButton>
       <TheButton @click="() => navigateTo('/quiz')">Тест</TheButton>
-      <TheButton @click="() => navigateTo('/favourites')">Избранное</TheButton>
+      <TheButton v-if="false" @click="() => navigateTo('/favourites')">Избранное</TheButton>
     </div>
   </section>
 </template>

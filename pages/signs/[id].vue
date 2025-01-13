@@ -2,7 +2,12 @@
   <section class="py-20">
     <div v-if="!signs" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
     <div v-else>
-      <div v-for="sign in signs" :key="sign.number" class="mb-6 flex items-center gap-3">
+      <div
+        v-for="sign in signs"
+        :key="sign.number"
+        :id="`i${sign.number.replaceAll('.', '-')}`"
+        class="mb-6 flex items-center gap-3"
+      >
         <div class="image-container">
           <img :src="getImage(sign)" :alt="sign.title" class="max-h-full max-w-full" />
         </div>
@@ -43,6 +48,11 @@ function getImage(sign: Sign): string {
 
 onMounted(() => {
   loadData();
+
+  setTimeout(() => {
+    if (!route.hash) return;
+    document.querySelector(route.hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 200);
 });
 </script>
 

@@ -3,7 +3,7 @@ section {
 }
 
 .centered-section {
-  @apply flex h-dvh flex-col items-center justify-center;
+  @apply flex min-h-dvh h-auto flex-col items-center justify-center;
 }
 
 .heading-1 {

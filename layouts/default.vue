@@ -37,10 +37,10 @@ const FOOTER_NAVIGATION: NavigationItem[] = [
     title: 'Тест',
     path: '/quiz',
   },
-  {
-    title: 'Избранное',
-    path: '/favourites',
-  },
+  // {
+  //   title: 'Избранное',
+  //   path: '/favourites',
+  // },
 ];
 
 const route = useRoute();

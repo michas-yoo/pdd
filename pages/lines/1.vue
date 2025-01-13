@@ -5,6 +5,7 @@
       <div
         v-for="line in lines"
         :key="line.number"
+        :id="`i${line.number.replaceAll('.', '-')}`"
         class="mb-6 flex items-center gap-3 flex-wrap"
       >
         <h2 class="mb-2 text-lg font-bold">{{ line.number }}</h2>
@@ -22,12 +23,18 @@ import type { Line } from '~/domain/Line';
 import { getLineUrl } from '~/utils';
 import data from '~/assets/data/lines/1.json';
 
+const route = useRoute();
 const header = useState('header');
 
 const lines = ref<Line[]>(data.lines);
 
 onMounted(() => {
   header.value = { title: data.groupName, link: '/lines' };
+
+  setTimeout(() => {
+    if (!route.hash) return;
+    document.querySelector(route.hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 });
 </script>
 

@@ -17,6 +17,7 @@ type BaseQuestion<TQuestion, TAnswer> = {
   question: TQuestion;
   answers: TAnswer[];
   correctAnswer: TAnswer;
+  number: string;
   type: QuestionTypes;
   questionAsImage: boolean;
   answersAsImages: boolean;

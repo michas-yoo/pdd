@@ -6,6 +6,7 @@ function createLineQuestion(line: Line): LineQuestion {
   const questionAsImage = Math.random() > 0.5;
 
   return {
+    number: line.number,
     question: line.number,
     answers: [line.number],
     correctAnswer: line.number,
@@ -15,7 +16,15 @@ function createLineQuestion(line: Line): LineQuestion {
   };
 }
 
-export function getLineQuestion(pool: Line[]): Question {
-  const question = createQuestion(pool, createLineQuestion);
+export function getLineQuestion(pool: Line[], lineNumber?: Line['number']): Question {
+  let question: LineQuestion;
+
+  if (lineNumber) {
+    const selectedLine = pool.find(line => line.number === lineNumber)!;
+    question = createLineQuestion(selectedLine);
+  } else {
+    question = createQuestion(pool, createLineQuestion);
+  }
+
   return populateAnswers(question, pool, 'number');
 }

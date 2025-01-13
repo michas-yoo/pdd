@@ -9,3 +9,18 @@ section {
 .heading-1 {
   @apply mb-5 text-center text-xl font-bold;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Track */
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}

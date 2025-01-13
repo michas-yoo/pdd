@@ -1,6 +1,6 @@
 <template>
   <section class="py-20 overflow-x-hidden">
-    <div class="flex gap-2 overflow-x-auto mb-5">
+    <div class="no-scrollbar flex gap-2 overflow-x-auto mb-5">
       <TheButton
         v-for="i in quiz.length"
         :key="`nav-${i}`"
@@ -19,70 +19,69 @@
       </TheButton>
     </div>
     <TheLoading v-if="!quiz.length" />
-    <Transition :name="animation">
-      <div
-        v-if="isQuestionShown"
-        class="border rounded-lg p-4 flex justify-center text-center flex-wrap mb-10"
-      >
-        <div class="w-full flex justify-center mb-3">
-          <img
-            v-if="quizItem.question.questionAsImage"
-            :alt="quizItem.question.question"
-            :src="getQuestionImage(quizItem.question)"
-            :class="{
+    <ClientOnly>
+      <swiper-container ref="swiperRef" :init="false">
+        <swiper-slide v-for="quizItem in quiz">
+          <div class="border rounded-lg p-4 flex justify-center text-center flex-wrap">
+            <div class="w-full flex justify-center mb-3">
+              <img
+                v-if="quizItem.question.questionAsImage"
+                :alt="quizItem.question.question"
+                :src="getQuestionImage(quizItem.question)"
+                :class="{
             'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionTypes.SignQuestion,
           }"
-          />
-          <h2 class="font-bold" v-else>{{ quizItem.question.question }}</h2>
-        </div>
-
-        <div
-          class="w-full grid gap-2"
-          :class="[
-          quizItem.question.type === QuestionTypes.LineQuestion && quizItem.question.answersAsImages
-            ? 'grid-cols-1'
-            : 'grid-cols-2',
-        ]"
-        >
-          <TheButton
-            v-for="(answer, j) in quizItem.question.answers"
-            :key="`ans-${j}`"
-            :class="`min-h-20 flex items-center justify-center ${
-            quizItem.answered
-            ? quizItem.clickedAnswer === j
-              ? quizItem.correct ? `bg-green-300` : `bg-red-300`
-              : quizItem.correctId === j ? 'bg-green-300' : 'bg-gray-300'
-            : ''
-          }`"
-            @click="() => selectAnswer(quizItem, j)"
-          >
-            <img
-              v-if="quizItem.question.answersAsImages"
-              :src="getAnswerImage(quizItem.question, answer)"
-              :alt="answer"
-              :class="{
-              'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionTypes.SignQuestion,
-            }"
-            />
-            <span v-else>{{ answer }}</span>
-          </TheButton>
-        </div>
-
-        <div v-if="quizItem.answered && !quizItem.correct" class="mt-5">
-          <NuxtLink
-            :to="
+              />
+              <h2 class="font-bold" v-else>{{ quizItem.question.question }}</h2>
+            </div>
+            <div
+              class="w-full grid gap-2"
+              :class="[
+                quizItem.question.type === QuestionTypes.LineQuestion && quizItem.question.answersAsImages
+                  ? 'grid-cols-1'
+                  : 'grid-cols-2',
+              ]"
+            >
+              <TheButton
+                v-for="(answer, j) in quizItem.question.answers"
+                :key="`ans-${j}`"
+                :class="`min-h-20 flex items-center justify-center ${
+                  quizItem.answered
+                  ? quizItem.clickedAnswer === j
+                    ? quizItem.correct ? `bg-green-300` : `bg-red-300`
+                    : quizItem.correctId === j ? 'bg-green-300' : 'bg-gray-300'
+                  : ''
+                }`"
+                @click="() => selectAnswer(quizItem, j)"
+              >
+                <img
+                  v-if="quizItem.question.answersAsImages"
+                  :src="getAnswerImage(quizItem.question, answer)"
+                  :alt="answer"
+                  :class="{
+                    'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionTypes.SignQuestion,
+                  }"
+                />
+                <span v-else class="break-words">{{ answer }}</span>
+              </TheButton>
+            </div>
+            <div v-if="quizItem.answered && !quizItem.correct" class="mt-5">
+              <NuxtLink
+                :to="
               quizItem.question.type === QuestionTypes.SignQuestion
                ? `/signs/${quizItem.question.number.slice(0, 1)}/#i${quizItem.question.number.replaceAll('.', '-')}`
                : `/lines/${quizItem.question.number.slice(0, 1)}/#i${quizItem.question.number.replaceAll('.', '-')}`
             "
-            class="text-blue-500"
-          >
-            Подробнее
-          </NuxtLink>
-        </div>
-      </div>
-    </Transition>
-    <div class="grid gap-3">
+                class="text-blue-500"
+              >
+                Подробнее
+              </NuxtLink>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+    </ClientOnly>
+    <div class="grid gap-3 mt-10">
       <TheButton
         v-if="canGoNext"
         class="bg-blue-400 text-white border-none"
@@ -128,9 +127,16 @@ const isQuestionShown = ref(false);
 const canGoNext = ref(false);
 const canRestart = ref(false);
 const canShowErrors = ref(false);
-const animation = ref<'slide-in' | 'slide-out'>('slide-in');
 
-const quizItem = computed(() => quiz.value[currentId.value] || null);
+const swiperRef = ref();
+const swiper = ref();
+
+useSwiper(swiperRef, {
+  on: {
+    init: (sw) => (swiper.value = sw),
+    activeIndexChange: ({ activeIndex }) => setActiveQuestion(activeIndex),
+  },
+});
 
 async function loadSigns() {
   for (let i = 1; i < 9; i++) {
@@ -172,7 +178,6 @@ async function loadDataAndGenerateQuiz() {
 }
 
 function setActiveQuestion(i: number) {
-  animateNextQuestion(i > currentId.value);
   currentId.value = i;
 }
 
@@ -186,27 +191,17 @@ function scrollToCurrent() {
   }, 100);
 }
 
-function animateNextQuestion(isIn: boolean) {
-  animation.value = isIn ? 'slide-in' : 'slide-out';
-  isQuestionShown.value = false;
-  setTimeout(() => isQuestionShown.value = true, 300);
-}
-
 function showNextQuestion() {
   canGoNext.value = false;
 
   if (nextElementExists(currentId.value, quiz.value)) {
     currentId.value = currentId.value + 1;
-    scrollToCurrent();
-    animateNextQuestion(true);
     return;
   }
 
   const skippedQuestion = getSkippedQuestion(quiz.value);
   if (skippedQuestion) {
-    animateNextQuestion(skippedQuestion > currentId.value);
     currentId.value = skippedQuestion;
-    scrollToCurrent();
   } else {
     canGoNext.value = false;
     canRestart.value = true;
@@ -238,6 +233,11 @@ function showOnlyErrors() {
   canRestart.value = true;
 }
 
+watch(currentId, (val) => {
+  scrollToCurrent();
+  swiper.value?.slideTo(val);
+});
+
 onMounted(() => {
   header.value = { title: 'Тест', link: '/' };
   loadDataAndGenerateQuiz();
@@ -245,37 +245,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.slide-in-enter-active {
-  animation: slide-in 0.3s ease-in-out;
-}
 
-.slide-in-leave-active {
-  animation: slide-out 0.3s ease-in-out;
-}
-
-.slide-out-enter-active {
-  animation: slide-out 0.3s ease-in-out;
-}
-
-.slide-out-leave-active {
-  animation: slide-in 0.3s ease-in-out;
-}
-
-@keyframes slide-in {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
 </style>

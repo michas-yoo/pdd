@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="min-h-dvh bg-white">
     <header
       v-if="canShowHeader"
       :class="['fixed left-0 top-0 w-full border-b bg-white p-2 text-center', 'flex items-center justify-between']"

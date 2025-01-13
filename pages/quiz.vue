@@ -37,7 +37,9 @@
       <div
         class="w-full grid gap-2"
         :class="[
-          quizItem.question.type === QuestionTypes.LineQuestion && quizItem.question.answersAsImages ? 'grid-cols-1' : 'grid-cols-2',
+          quizItem.question.type === QuestionTypes.LineQuestion && quizItem.question.answersAsImages
+            ? 'grid-cols-1'
+            : 'grid-cols-2',
         ]"
       >
         <TheButton
@@ -85,9 +87,9 @@
 import type { Sign } from '~/domain/Sign';
 import type { Line } from '~/domain/Line';
 import type { Quiz, QuizQuestion } from '~/domain/Quiz';
-import { generateQuiz } from '~/domain/Quiz';
 import { QuestionTypes } from '~/domain/Question';
-import { getLineUrl, getSignUrl } from '~/utils';
+import { getSkippedQuestion, nextElementExists, generateQuiz } from '~/domain/Quiz';
+import { getAnswerImage, getQuestionImage } from '~/utils';
 
 const allSigns = ref<Sign[]>([]);
 const allLines = ref<Line[]>([]);
@@ -127,22 +129,6 @@ async function loadDataAndGenerateQuiz() {
   });
 }
 
-function getQuestionImage(question: QuizQuestion['question']) {
-  if (question.type === QuestionTypes.SignQuestion) {
-    return getSignUrl(question.question);
-  }
-
-  return getLineUrl(question.question);
-}
-
-function getAnswerImage(question: QuizQuestion['question'], answer: string) {
-  if (question.type === QuestionTypes.SignQuestion) {
-    return getSignUrl(answer);
-  }
-
-  return getLineUrl(answer);
-}
-
 function setActiveQuestion(i: number) {
   currentId.value = i;
 }
@@ -157,30 +143,22 @@ function scrollToCurrent() {
   }, 100);
 }
 
-function nextElementExists(): boolean {
-  return currentId.value + 1 < quiz.value.length && !quiz.value[currentId.value + 1].answered;
-}
-
-function getSkippedQuestion(): number {
-  return quiz.value.findIndex((question: QuizQuestion) => !question.answered);
-}
-
 function showNextQuestion() {
   canGoNext.value = false;
 
-  if (nextElementExists()) {
+  if (nextElementExists(currentId.value, quiz.value)) {
     currentId.value = currentId.value + 1;
     scrollToCurrent();
     return;
   }
 
-  const skippedQuestion = getSkippedQuestion();
+  const skippedQuestion = getSkippedQuestion(quiz.value);
   if (skippedQuestion) {
     currentId.value = skippedQuestion;
     scrollToCurrent();
   } else {
-    canGoNext.value = false;
     isFinal.value = true;
+    canGoNext.value = false;
   }
 }
 
@@ -189,7 +167,7 @@ function selectAnswer(quizItem: QuizQuestion, answer: number) {
   quizItem.clickedAnswer = answer;
   quizItem.correct = answer === quizItem.correctId;
 
-  if (nextElementExists() || getSkippedQuestion() >= 0) {
+  if (nextElementExists(currentId.value, quiz.value) || getSkippedQuestion(quiz.value) >= 0) {
     canGoNext.value = true
   } else {
     isFinal.value = true;

@@ -5,6 +5,16 @@ import { QuestionTypes } from './Question';
 import { getSignQuestion } from './SignQuestion';
 import { getLineQuestion } from './LineQuestion';
 
+type AnyPoolCallback = (x: any, y?: any) => Question;
+
+type QuizParams = {
+  mainPool: Sign[] | Line[];
+  secondaryPool?: Sign[] | Line[];
+  useOnePool?: boolean;
+  questionsAmount?: number;
+  singlePoolName?: '' | QuestionTypes;
+};
+
 export type QuizQuestion = {
   question: Question;
   correct: boolean;
@@ -15,20 +25,17 @@ export type QuizQuestion = {
 
 export type Quiz = QuizQuestion[];
 
-type QuizParams = {
-  mainPool: Sign[] | Line[];
-  secondaryPool?: Sign[] | Line[];
-  useOnePool?: boolean;
-  questionsAmount?: number;
-  singlePoolName?: '' | QuestionTypes;
-};
-
-type AnyPoolCallback = (x: any, y?: any) => Question;
-
 export function getQuestionFromTwoPools(signsPool: Sign[], linesPool: Line[]): Question {
   if (Math.random() > 0.5) return getSignQuestion(signsPool);
-
   return getLineQuestion(linesPool);
+}
+
+export function nextElementExists(currentId: number, quiz: Quiz): boolean {
+  return currentId + 1 < quiz.length && !quiz[currentId + 1].answered;
+}
+
+export function getSkippedQuestion(quiz: Quiz): number {
+  return quiz.findIndex((question: QuizQuestion) => !question.answered);
 }
 
 export function generateQuiz({

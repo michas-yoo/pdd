@@ -16,21 +16,13 @@
 </template>
 
 <script setup lang="ts">
+import type { Sign } from '~/domain/Sign';
 import data from '~/assets/data/signs/popular.json';
 import { getSignUrl } from '~/utils';
 
-type SignInfo = {
-  title: string;
-  description?: string;
-};
-
-type SignGroup = {
-  [groupKey: string]: SignInfo;
-};
-
 const header = useState('header');
 
-const groupData = ref<SignGroup | null>(data);
+const groupData = ref<Sign>(data);
 
 onMounted(() => {
   header.value = { title: 'Популярные знаки', link: '/signs' };

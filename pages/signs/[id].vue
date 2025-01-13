@@ -16,22 +16,13 @@
 </template>
 
 <script setup lang="ts">
+import type { Sign, SignInfo } from '~/domain/Sign';
 import { getSignUrl } from '~/utils';
-
-type SignInfo = {
-  title: string;
-  versions?: string[];
-  description?: string;
-};
-
-type SignGroup = {
-  [groupKey: string]: SignInfo;
-};
 
 const route = useRoute();
 const header = useState('header');
 
-const groupData = ref<SignGroup | null>(null);
+const groupData = ref<Sign | null>(null);
 
 async function loadData() {
   const data = await import((`~/assets/data/signs/${route.params.id}.json`));

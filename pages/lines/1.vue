@@ -18,21 +18,16 @@
 </template>
 
 <script setup lang="ts">
+import type { Line } from '~/domain/Line';
 import { getLineUrl } from '~/utils';
 import data from '~/assets/data/lines/1.json';
 
-type LineGroup = {
-  [groupKey: string]: {
-    description?: string;
-  };
-};
-
 const header = useState('header');
 
-const groupData = ref<LineGroup | null>(data.lines);
+const groupData = ref<Line>(data.lines);
 
 onMounted(() => {
-  header.value = { title: data.groupName, link: '/lines' }
+  header.value = { title: data.groupName, link: '/lines' };
 });
 </script>
 

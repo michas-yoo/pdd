@@ -11,7 +11,7 @@
           :alt="quizItem.question.question"
           :src="getQuestionImage(quizItem.question)"
           :class="{
-            'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionType.SignQuestion,
+            'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionTypes.SignQuestion,
           }"
         />
         <h2 class="font-bold" v-else>{{ quizItem.question.question }}</h2>
@@ -28,7 +28,7 @@
             :src="getAnswerImage(quizItem.question, answer)"
             :alt="answer"
             :class="{
-              'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionType.SignQuestion,
+              'max-h-[106px] max-w-[120px]': quizItem.question.type === QuestionTypes.SignQuestion,
             }"
           />
           <span v-else>{{ answer }}</span>
@@ -41,14 +41,14 @@
 <script setup lang="ts">
 import type { Sign } from '~/domain/Sign';
 import type { Line } from '~/domain/Line';
-import type { QuizQuestion } from '~/domain/Quiz';
+import type { Quiz, QuizQuestion } from '~/domain/Quiz';
 import { generateQuiz } from '~/domain/Quiz';
-import { QuestionType } from '~/domain/Question';
+import { QuestionTypes } from '~/domain/Question';
 import { getLineUrl, getSignUrl } from '~/utils';
 
 const allSigns = ref<Sign[]>([]);
 const allLines = ref<Line[]>([]);
-const quiz = ref<QuizQuestion[]>([]);
+const quiz = ref<Quiz>([]);
 
 async function loadSigns() {
   for (let i = 1; i < 9; i++) {
@@ -71,11 +71,14 @@ async function loadLines() {
 async function loadDataAndGenerateQuiz() {
   await loadSigns();
   await loadLines();
-  quiz.value = generateQuiz(allSigns.value, allLines.value);
+  quiz.value = generateQuiz({
+    mainPool: allSigns.value,
+    secondaryPool: allLines.value
+  });
 }
 
 function getQuestionImage(question: QuizQuestion['question']) {
-  if (question.type === QuestionType.SignQuestion) {
+  if (question.type === QuestionTypes.SignQuestion) {
     return getSignUrl(question.question);
   }
 
@@ -83,7 +86,7 @@ function getQuestionImage(question: QuizQuestion['question']) {
 }
 
 function getAnswerImage(question: QuizQuestion['question'], answer: string) {
-  if (question.type === QuestionType.SignQuestion) {
+  if (question.type === QuestionTypes.SignQuestion) {
     return getSignUrl(answer);
   }
 

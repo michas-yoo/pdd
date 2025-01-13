@@ -1,7 +1,7 @@
 <template>
   <main>
     <header
-      v-if="canShowNavigation"
+      v-if="canShowHeader"
       :class="['fixed left-0 top-0 w-full border-b bg-white p-2 text-center', 'flex items-center justify-between']"
     >
       <button class="rounded-md border px-4 py-3" @click="navigateTo(header.link)">⬅️️</button>
@@ -9,7 +9,7 @@
       <div class="w-[50px]" />
     </header>
     <slot />
-    <footer v-if="canShowNavigation">
+    <footer v-if="canShowFooter">
       <TheButton v-for="(item, i) in FOOTER_NAVIGATION" :key="i" @click="() => navigateTo(item.path)">
         {{ item.title }}
       </TheButton>
@@ -46,7 +46,9 @@ const FOOTER_NAVIGATION: NavigationItem[] = [
 const route = useRoute();
 const header: Ref<{ title: string; link: string }> = useState('header');
 
-const canShowNavigation = computed(() => route.path !== '/');
+const canShowHeader = computed(() => route.path !== '/');
+
+const canShowFooter = computed(() => !['/', '/quiz'].includes(route.path))
 </script>
 
 <style scoped>

@@ -9,6 +9,8 @@ export type QuizQuestion = {
   question: Question;
   correct: boolean;
   answered: boolean;
+  clickedAnswer: number;
+  correctId: number;
 };
 
 export type Quiz = QuizQuestion[];
@@ -44,11 +46,15 @@ export function generateQuiz({
   }
 
   for (let i = 0; i < questionsAmount; i++) {
-    quiz.push({
+    const question = {
       question: questionCallback(mainPool, secondaryPool),
       correct: false,
       answered: false,
-    });
+      clickedAnswer: 0,
+      correctId: 0,
+    };
+    question.correctId = question.question.answers.findIndex((x) => x === question.question.correctAnswer);
+    quiz.push(question);
   }
 
   return quiz;

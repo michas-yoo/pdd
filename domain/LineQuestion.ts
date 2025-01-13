@@ -1,7 +1,6 @@
 import type { Line } from './Line';
 import type { LineQuestion, Question } from './Question';
-import { QuestionTypes } from '~/domain/Question';
-import { createQuestion, populateAnswers } from './Question';
+import { createQuestion, populateAnswers, QuestionTypes } from './Question';
 
 function createLineQuestion(line: Line): LineQuestion {
   const questionAsImage = Math.random() > 0.5;

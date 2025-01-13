@@ -1,14 +1,14 @@
 <template>
   <section class="py-20">
-    <div v-if="!groupData" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
+    <div v-if="!lines" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
     <div v-else>
-      <div v-for="(value, key) in groupData" :key="key" class="mb-6 flex items-center gap-3">
+      <div v-for="line in lines" :key="line.number" class="mb-6 flex items-center gap-3">
         <div class="image-container">
-          <img :src="getLineUrl(key as string)" :alt="key as string" class="max-h-full max-w-full" />
+          <img :src="getLineUrl(line.number)" :alt="line.number" class="max-h-full max-w-full" />
         </div>
         <div>
-          <h2 class="mb-2 text-lg font-bold">{{ key }}</h2>
-          <p>{{ value.description }}</p>
+          <h2 class="mb-2 text-lg font-bold">{{ line.number }}</h2>
+          <p>{{ line.description }}</p>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@ import data from '~/assets/data/lines/2.json';
 
 const header = useState('header');
 
-const groupData = ref<Line>(data.lines);
+const lines = ref<Line[]>(data.lines);
 
 onMounted(() => {
   header.value = { title: data.groupName, link: '/lines' };

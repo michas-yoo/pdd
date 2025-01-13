@@ -1,9 +1,9 @@
 import type { Sign } from './Sign';
 import type { Line } from './Line';
 import type { Question } from './Question';
-import { getSignQuestion } from '~/domain/SignQuestion';
-import { getLineQuestion } from '~/domain/LineQuestion';
 import { QuestionTypes } from './Question';
+import { getSignQuestion } from './SignQuestion';
+import { getLineQuestion } from './LineQuestion';
 
 export type QuizQuestion = {
   question: Question;

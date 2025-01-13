@@ -1,14 +1,14 @@
 <template>
   <section class="py-20">
-    <div v-if="!groupData" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
+    <div v-if="!signs" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
     <div v-else>
-      <div v-for="(value, key) in groupData" :key="key" class="mb-6 flex items-center gap-3">
+      <div v-for="sign in signs" :key="sign.number" class="mb-6 flex items-center gap-3">
         <div class="image-container">
-          <img :src="getImage(key as string, value)" :alt="value.title" class="max-h-full max-w-full" />
+          <img :src="getImage(sign)" :alt="sign.title" class="max-h-full max-w-full" />
         </div>
         <div>
-          <h2 class="mb-2 text-lg font-bold">{{ key }} {{ value.title }}</h2>
-          <p v-if="value.description">{{ value.description }}</p>
+          <h2 class="mb-2 text-lg font-bold">{{ sign.number }} {{ sign.title }}</h2>
+          <p v-if="sign.description">{{ sign.description }}</p>
         </div>
       </div>
     </div>
@@ -16,22 +16,22 @@
 </template>
 
 <script setup lang="ts">
-import type { Sign, SignInfo } from '~/domain/Sign';
+import type { Sign } from '~/domain/Sign';
 import { getSignUrl } from '~/utils';
 
 const route = useRoute();
 const header = useState('header');
 
-const groupData = ref<Sign | null>(null);
+const signs = ref<Sign[] | null>(null);
 
 async function loadData() {
   const data = await import((`~/assets/data/signs/${route.params.id}.json`));
-  groupData.value = data.signs;
+  signs.value = data.signs;
   header.value = { title: data.groupName, link: '/signs' };
 }
 
-function getImage(key: string, sign: SignInfo): string {
-  let signName: string = key;
+function getImage(sign: Sign): string {
+  let signName = sign.number;
 
   if (sign.versions) {
     const version = sign.versions[Math.floor(Math.random() * sign.versions.length)];

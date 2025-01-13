@@ -1,14 +1,14 @@
 <template>
   <section class="py-20">
-    <div v-if="!groupData" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
+    <div v-if="!signs" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
     <div v-else>
-      <div v-for="(value, key) in groupData" :key="key" class="mb-6 flex items-center gap-3">
+      <div v-for="sign in signs" :key="sign.number" class="mb-6 flex items-center gap-3">
         <div class="image-container">
-          <img :src="getSignUrl(key as string)" :alt="value.title" class="max-h-full max-w-full" />
+          <img :src="getSignUrl(sign.number)" :alt="sign.title" class="max-h-full max-w-full" />
         </div>
         <div>
-          <h2 class="mb-2 text-lg font-bold">{{ key }} {{ value.title }}</h2>
-          <p v-if="value.description">{{ value.description }}</p>
+          <h2 class="mb-2 text-lg font-bold">{{ sign.number }} {{ sign.title }}</h2>
+          <p v-if="sign.description">{{ sign.description }}</p>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@ import { getSignUrl } from '~/utils';
 
 const header = useState('header');
 
-const groupData = ref<Sign>(data);
+const signs = ref<Sign[]>(data);
 
 onMounted(() => {
   header.value = { title: 'Популярные знаки', link: '/signs' };

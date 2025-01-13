@@ -91,13 +91,15 @@ import { QuestionTypes } from '~/domain/Question';
 import { getSkippedQuestion, nextElementExists, generateQuiz } from '~/domain/Quiz';
 import { getAnswerImage, getQuestionImage } from '~/utils';
 
+const header = useState('header');
+
 const allSigns = ref<Sign[]>([]);
 const allLines = ref<Line[]>([]);
 const quiz = ref<Quiz>([]);
 
 const currentId = ref(0);
-const canGoNext = ref(false);
 const isFinal = ref(false);
+const canGoNext = ref(false);
 
 const quizItem = computed(() => quiz.value[currentId.value] || null);
 
@@ -176,6 +178,7 @@ function selectAnswer(quizItem: QuizQuestion, answer: number) {
 
 onMounted(() => {
   loadDataAndGenerateQuiz();
+  header.value = { title: 'Тест', link: '/' };
 });
 </script>
 

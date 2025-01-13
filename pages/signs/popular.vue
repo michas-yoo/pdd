@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 import type { Sign } from '~/domain/Sign';
-import data from '~/assets/data/signs/popular.json';
 import { getSignUrl } from '~/utils';
+import data from '~/assets/data/signs/popular.json';
 
 const header = useState('header');
 

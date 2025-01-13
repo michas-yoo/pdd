@@ -2,49 +2,31 @@ import type { Line } from './Line';
 import type { Sign } from './Sign';
 import { getRndArrayIndex, getRndNumber, shuffleArray } from '~/utils';
 
-export enum QuestionType {
-  SignQuestion,
-  LineQuestion,
-}
-
 enum SignQuestionType {
   SignGetKeyFromKey,
   SignGetTitleFromKey,
   SignGetKeyFromTitle,
 }
 
-type SignGetKeyFromKey = {
-  question: Sign['number'];
-  answers: Sign['number'][];
-  correctAnswer: Sign['number'];
-  skip: Sign['number'][];
-  type: QuestionType;
-  signQuestionType: SignQuestionType;
-  questionAsImage: boolean;
-  answersAsImages: boolean;
-};
-
-type SignGetTitleFromKey = {
-  question: Sign['number'];
-  answers: Sign['title'][];
-  correctAnswer: Sign['title'];
-  skip: Sign['number'][];
-  type: QuestionType;
-  signQuestionType: SignQuestionType;
-  questionAsImage: boolean;
-  answersAsImages: boolean;
+export enum QuestionType {
+  SignQuestion,
+  LineQuestion,
 }
 
-type SignGetKeyFromTitle = {
-  question: Sign['title'];
-  answers: Sign['number'][];
-  correctAnswer: Sign['number'];
+type BaseSignQuestion<TQuestion, TAnswer> = {
+  question: TQuestion;
+  answers: TAnswer[];
+  correctAnswer: TAnswer;
   skip: Sign['number'][];
   type: QuestionType;
   signQuestionType: SignQuestionType;
   questionAsImage: boolean;
   answersAsImages: boolean;
 };
+
+type SignGetKeyFromKey = BaseSignQuestion<Sign['number'], Sign['number']>;
+type SignGetTitleFromKey = BaseSignQuestion<Sign['number'], Sign['title']>;
+type SignGetKeyFromTitle = BaseSignQuestion<Sign['title'], Sign['number']>;
 
 type SignQuestion = SignGetKeyFromKey | SignGetTitleFromKey | SignGetKeyFromTitle;
 
@@ -114,20 +96,17 @@ function getLineQuestion(line: Line): LineQuestion {
 }
 
 function populateSignQuestionAnswers(question: SignQuestion, signsPool: Sign[]) {
-  const availableSigns: Sign[] = [...signsPool];
+  const availableSigns: Sign[] = question.skip.length
+    ? signsPool.filter(sign => !question.skip.includes(sign.number))
+    : [...signsPool];
 
   for (let i = 0; i < 3; i++) {
-    let rndIndex = getRndArrayIndex(availableSigns);
-    let probableSign = availableSigns[rndIndex];
-
-    while (question.skip.includes(probableSign.number)) {
-      rndIndex = getRndArrayIndex(availableSigns);
-      probableSign = availableSigns[rndIndex];
-    }
-
+    const rndIndex = getRndArrayIndex(availableSigns);
+    const probableSign = availableSigns[rndIndex];
     const answer = question.signQuestionType === SignQuestionType.SignGetTitleFromKey
       ? probableSign.title
       : probableSign.number;
+
     question.answers.push(answer);
     availableSigns.splice(rndIndex, 1);
   }

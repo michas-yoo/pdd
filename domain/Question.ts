@@ -1,27 +1,27 @@
-import type { Line, LineKey } from './Line';
-import type { Sign, SignInfo, SignKey } from './Sign';
+import type { Line, } from './Line';
+import type { Sign } from './Sign';
 import { getRndArrayElement, getRndNumber } from '~/utils';
 
 type SignGetKeyFromKey = {
-  question: SignKey;
-  answers: SignKey[];
-  correctAnswer: SignKey;
+  question: Sign['number'];
+  answers: Sign['number'][];
+  correctAnswer: Sign['number'];
   hasImage: boolean;
   questionType: number;
 };
 
 type SignGetTitleFromKey = {
-  question: SignKey;
-  answers: SignInfo['title'][];
-  correctAnswer: SignInfo['title'];
+  question: Sign['number'];
+  answers: Sign['title'][];
+  correctAnswer: Sign['title'];
   hasImage: boolean;
   questionType: number;
 }
 
 type SignGetKeyFromTitle = {
-  question: SignInfo['title'];
-  answers: SignKey;
-  correctAnswer: SignKey;
+  question: Sign['title'];
+  answers: Sign['number'];
+  correctAnswer: Sign['number'];
   hasImage: boolean;
   questionType: number;
 };
@@ -29,39 +29,37 @@ type SignGetKeyFromTitle = {
 type SignQuestion = SignGetKeyFromKey | SignGetTitleFromKey | SignGetKeyFromTitle;
 
 type LineQuestion = {
-  question: LineKey;
-  answers: LineKey[];
-  correctAnswer: LineKey;
+  question: Line['number'];
+  answers: Line['number'][];
+  correctAnswer: Line['number'];
   hasImage: boolean;
 }
 
 function getSignQuestion(sign: Sign): SignQuestion {
-  const signKey: SignKey = Object.keys(sign)[0];
-  const signInfo: SignInfo = sign[signKey];
   const questionType = getRndNumber(0, 2);
 
   switch (questionType) {
     case 0: // SignGetKeyFromKey
       return {
-        question: signKey,
-        answers: [signKey],
-        correctAnswer: signKey,
+        question: sign.number,
+        answers: [sign.number],
+        correctAnswer: sign.number,
         hasImage: Math.random() > 0.5,
         questionType,
       };
     case 1: // SignGetTitleFromKey
       return {
-        question: signKey,
-        answers: [signInfo.title],
-        correctAnswer: signInfo.title,
+        question: sign.number,
+        answers: [sign.title],
+        correctAnswer: sign.title,
         hasImage: Math.random() > 0.5,
         questionType,
       };
     default: // SignGetKeyFromTitle
       return {
-        question: signInfo.title,
-        answers: [signKey],
-        correctAnswer: signKey,
+        question: sign.title,
+        answers: [sign.number],
+        correctAnswer: sign.number,
         hasImage: Math.random() > 0.5,
         questionType,
       };
@@ -69,12 +67,10 @@ function getSignQuestion(sign: Sign): SignQuestion {
 }
 
 function getLineQuestion(line: Line): LineQuestion {
-  const lineKey: SignKey = Object.keys(line)[0];
-
   return {
-    question: lineKey,
-    answers: [lineKey],
-    correctAnswer: lineKey,
+    question: line.number,
+    answers: [line.number],
+    correctAnswer: line.number,
     hasImage: Math.random() > 0.5,
   };
 }

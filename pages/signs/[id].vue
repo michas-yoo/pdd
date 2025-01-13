@@ -1,6 +1,6 @@
 <template>
   <section class="py-20">
-    <div v-if="!signs" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xl">Загрузка...</div>
+    <TheLoading v-if="!signs" />
     <div v-else>
       <div
         v-for="sign in signs"

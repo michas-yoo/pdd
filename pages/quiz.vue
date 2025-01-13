@@ -18,7 +18,8 @@
         {{ i }}
       </TheButton>
     </div>
-    <Transition name="slide-in">
+    <TheLoading v-if="!quiz.length" />
+    <Transition :name="animation">
       <div
         v-if="isQuestionShown"
         class="border rounded-lg p-4 flex justify-center text-center flex-wrap mb-10"
@@ -127,6 +128,7 @@ const isQuestionShown = ref(false);
 const canGoNext = ref(false);
 const canRestart = ref(false);
 const canShowErrors = ref(false);
+const animation = ref<'slide-in' | 'slide-out'>('slide-in');
 
 const quizItem = computed(() => quiz.value[currentId.value] || null);
 
@@ -170,8 +172,8 @@ async function loadDataAndGenerateQuiz() {
 }
 
 function setActiveQuestion(i: number) {
+  animateNextQuestion(i > currentId.value);
   currentId.value = i;
-  animateNextQuestion();
 }
 
 function scrollToCurrent() {
@@ -184,7 +186,8 @@ function scrollToCurrent() {
   }, 100);
 }
 
-function animateNextQuestion() {
+function animateNextQuestion(isIn: boolean) {
+  animation.value = isIn ? 'slide-in' : 'slide-out';
   isQuestionShown.value = false;
   setTimeout(() => isQuestionShown.value = true, 300);
 }
@@ -195,15 +198,15 @@ function showNextQuestion() {
   if (nextElementExists(currentId.value, quiz.value)) {
     currentId.value = currentId.value + 1;
     scrollToCurrent();
-    animateNextQuestion();
+    animateNextQuestion(true);
     return;
   }
 
   const skippedQuestion = getSkippedQuestion(quiz.value);
   if (skippedQuestion) {
+    animateNextQuestion(skippedQuestion > currentId.value);
     currentId.value = skippedQuestion;
     scrollToCurrent();
-    animateNextQuestion();
   } else {
     canGoNext.value = false;
     canRestart.value = true;
@@ -236,8 +239,8 @@ function showOnlyErrors() {
 }
 
 onMounted(() => {
-  loadDataAndGenerateQuiz();
   header.value = { title: 'Тест', link: '/' };
+  loadDataAndGenerateQuiz();
 });
 </script>
 
@@ -248,6 +251,14 @@ onMounted(() => {
 
 .slide-in-leave-active {
   animation: slide-out 0.3s ease-in-out;
+}
+
+.slide-out-enter-active {
+  animation: slide-out 0.3s ease-in-out;
+}
+
+.slide-out-leave-active {
+  animation: slide-in 0.3s ease-in-out;
 }
 
 @keyframes slide-in {

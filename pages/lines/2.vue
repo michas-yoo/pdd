@@ -16,6 +16,13 @@
           <p>{{ line.description }}</p>
         </div>
       </div>
+
+      <TheButton
+        class="bg-blue-400 text-white border-none"
+        @click="() => navigateTo({ name: 'quiz', query: { lineGroup: 2 } })"
+      >
+        Проверить знания
+      </TheButton>
     </div>
   </section>
 </template>

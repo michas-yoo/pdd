@@ -98,7 +98,7 @@
       </TheButton>
       <TheButton
         v-if="canRestart"
-        class="bg-blue-400 text-white border-none"
+        class="bg-green-600 text-white border-none"
         @click="() => generateQuizQuestions()"
       >
         Ещё раз
@@ -110,11 +110,20 @@
 <script setup lang="ts">
 import type { Sign } from '~/domain/Sign';
 import type { Line } from '~/domain/Line';
-import type { Quiz, QuizQuestion } from '~/domain/Quiz';
-import { generateQuiz, getSkippedQuestion, nextElementExists } from '~/domain/Quiz';
+import {
+  generateQuizFromOnePool,
+  generateQuizFromTwoPools,
+  getSkippedQuestion,
+  nextElementExists,
+  type Quiz,
+  type QuizQuestion,
+} from '~/domain/Quiz';
 import { QuestionTypes } from '~/domain/Question';
 import { getAnswerImage, getQuestionImage } from '~/utils';
 
+const MAX_QUESTIONS = 10;
+
+const route = useRoute();
 const header = useState('header');
 
 const allSigns = ref<Sign[]>([]);
@@ -128,8 +137,8 @@ const canGoNext = ref(false);
 const canRestart = ref(false);
 const canShowErrors = ref(false);
 
-const swiperRef = ref();
 const swiper = ref();
+const swiperRef = ref();
 
 useSwiper(swiperRef, {
   on: {
@@ -138,7 +147,8 @@ useSwiper(swiperRef, {
   },
 });
 
-async function loadSigns() {
+// Loaders
+async function loadAllSigns() {
   for (let i = 1; i < 9; i++) {
     const group = await import((`~/assets/data/signs/${i}.json`));
     allSigns.value.push(group.signs);
@@ -147,48 +157,26 @@ async function loadSigns() {
   allSigns.value = allSigns.value.flat();
 }
 
-async function loadLines() {
+async function loadAllLines() {
   for (let i = 1; i < 3; i++) {
     const group = await import((`~/assets/data/lines/${i}.json`));
     allLines.value.push(group.lines);
   }
-
   allLines.value = allLines.value.flat();
 }
 
-function generateQuizQuestions() {
+async function loadData(type: string, id: string) {
+  const data = await import((`~/assets/data/${type}/${id}.json`));
+  return data[type];
+}
+
+// Store
+function resetData() {
   errors.value = [];
   currentId.value = 0;
-  canShowErrors.value = false;
   canGoNext.value = false;
   canRestart.value = false;
-
-  quiz.value = generateQuiz({
-    mainPool: allSigns.value,
-    secondaryPool: allLines.value,
-    questionsAmount: 10,
-  });
-  isQuestionShown.value = true;
-}
-
-async function loadDataAndGenerateQuiz() {
-  await loadSigns();
-  await loadLines();
-  generateQuizQuestions();
-}
-
-function setActiveQuestion(i: number) {
-  currentId.value = i;
-}
-
-function scrollToCurrent() {
-  setTimeout(() => {
-    document.querySelector('.current')?.scrollIntoView({
-      block: 'center',
-      inline: 'center',
-      behavior: 'smooth',
-    });
-  }, 100);
+  canShowErrors.value = false;
 }
 
 function showNextQuestion() {
@@ -233,6 +221,62 @@ function showOnlyErrors() {
   canRestart.value = true;
 }
 
+function setActiveQuestion(i: number) {
+  currentId.value = i;
+}
+
+// Utils
+function scrollToCurrent() {
+  setTimeout(() => {
+    document.querySelector('.current')?.scrollIntoView({
+      block: 'center',
+      inline: 'center',
+      behavior: 'smooth',
+    });
+  }, 100);
+}
+
+// Generators
+function generateQuizQuestions() {
+  resetData();
+  quiz.value = generateQuizFromTwoPools({
+    mainPool: allSigns.value,
+    secondaryPool: allLines.value,
+    maxQuestions: MAX_QUESTIONS,
+  });
+  isQuestionShown.value = true;
+}
+
+function setupQuizFromOnePool(pool: Sign[] | Line[], type: QuestionTypes) {
+  resetData();
+  quiz.value = generateQuizFromOnePool({
+    mainPool: pool,
+    poolType: type,
+    maxQuestions: MAX_QUESTIONS,
+  });
+  isQuestionShown.value = true;
+}
+
+async function setupDefaultQuiz() {
+  await loadAllSigns();
+  await loadAllLines();
+  generateQuizQuestions();
+}
+
+async function runQuizConstructor() {
+  if (route.query.signGroup) {
+    allSigns.value = await loadData('signs', route.query.signGroup.toString());
+    return setupQuizFromOnePool(allSigns.value, QuestionTypes.SignQuestion);
+  }
+
+  if (route.query.lineGroup) {
+    allLines.value = await loadData('lines', route.query.lineGroup.toString());
+    return setupQuizFromOnePool(allLines.value, QuestionTypes.LineQuestion);
+  }
+
+  await setupDefaultQuiz();
+}
+
 watch(currentId, (val) => {
   scrollToCurrent();
   swiper.value?.slideTo(val);
@@ -240,7 +284,7 @@ watch(currentId, (val) => {
 
 onMounted(() => {
   header.value = { title: 'Тест', link: '/' };
-  loadDataAndGenerateQuiz();
+  runQuizConstructor();
 });
 </script>
 

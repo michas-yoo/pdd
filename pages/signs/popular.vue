@@ -16,6 +16,13 @@
           <p v-if="sign.description">{{ sign.description }}</p>
         </div>
       </div>
+
+      <TheButton
+        class="bg-blue-400 text-white border-none"
+        @click="() => navigateTo({ name: 'quiz', query: { signGroup: 'popular' } })"
+      >
+        Проверить знания
+      </TheButton>
     </div>
   </section>
 </template>
@@ -27,7 +34,7 @@ import data from '~/assets/data/signs/popular.json';
 
 const header = useState('header');
 
-const signs = ref<Sign[]>(data);
+const signs = ref<Sign[]>(data.signs);
 
 onMounted(() => {
   header.value = { title: 'Популярные знаки', link: '/signs' };

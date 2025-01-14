@@ -14,6 +14,13 @@
         </div>
         <p v-if="line.description">{{ line.description }}</p>
       </div>
+
+      <TheButton
+        class="bg-blue-400 text-white border-none"
+        @click="() => navigateTo({ name: 'quiz', query: { lineGroup: 1 } })"
+      >
+        Проверить знания
+      </TheButton>
     </div>
   </section>
 </template>

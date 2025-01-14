@@ -99,7 +99,7 @@
       <TheButton
         v-if="canRestart"
         class="bg-green-600 text-white border-none"
-        @click="() => generateQuizQuestions()"
+        @click="() => runQuizConstructor()"
       >
         Ещё раз
       </TheButton>

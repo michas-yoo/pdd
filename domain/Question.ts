@@ -49,13 +49,3 @@ export function populateAnswers<T extends { answers: unknown[]; skip?: Sign['ski
 
   return question;
 }
-
-export function createQuestion<T, Q>(
-  pool: T[],
-  creationCallback: (item: T) => Q,
-): Q {
-  const rndIndex = getRndArrayIndex(pool);
-  const question = creationCallback(pool[rndIndex]);
-  pool.splice(rndIndex, 1);
-  return question;
-}

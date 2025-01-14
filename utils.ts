@@ -9,6 +9,8 @@ export const getRndNumber = (min: number, max: number) => Math.floor(Math.random
 
 export const getRndArrayIndex = <T>(array: T[]): number => Math.floor(Math.random() * array.length);
 
+export const getRndElement = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
+
 export const shuffleArray = <T>(array: T[]): T[] => {
   for (let i = array.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

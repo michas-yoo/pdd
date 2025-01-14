@@ -121,7 +121,7 @@ import {
 import { QuestionTypes } from '~/domain/Question';
 import { getAnswerImage, getQuestionImage } from '~/utils';
 
-const MAX_QUESTIONS = 2;
+const MAX_QUESTIONS = 10;
 
 const route = useRoute();
 const header = useState('header');

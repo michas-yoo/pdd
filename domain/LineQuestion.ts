@@ -1,6 +1,7 @@
 import type { Line } from './Line';
 import type { LineQuestion, Question } from './Question';
-import { createQuestion, populateAnswers, QuestionTypes } from './Question';
+import { populateAnswers, QuestionTypes } from './Question';
+import { getRndElement } from '~/utils';
 
 function createLineQuestion(line: Line): LineQuestion {
   const questionAsImage = Math.random() > 0.5;
@@ -23,8 +24,9 @@ export function getLineQuestion(pool: Line[], lineNumber?: Line['number']): Ques
     const selectedLine = pool.find(line => line.number === lineNumber)!;
     question = createLineQuestion(selectedLine);
   } else {
-    question = createQuestion(pool, createLineQuestion);
+    question = createLineQuestion(getRndElement(pool));
   }
 
-  return populateAnswers(question, pool, 'number');
+  const availablePool = pool.filter(el => el.number !== question.number);
+  return populateAnswers(question, availablePool, 'number');
 }

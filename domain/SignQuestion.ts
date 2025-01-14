@@ -1,7 +1,7 @@
 import type { Sign } from './Sign';
 import type { Question, SignQuestion } from './Question';
-import { createQuestion, populateAnswers, QuestionTypes, SignQuestionTypes } from './Question';
-import { getRndNumber } from '~/utils';
+import { populateAnswers, QuestionTypes, SignQuestionTypes } from './Question';
+import { getRndElement, getRndNumber } from '~/utils';
 
 const keyToKeyConstructor = (sign: Sign, questionAsImage: boolean): SignQuestion => ({
   number: sign.number,
@@ -60,10 +60,11 @@ export function getSignQuestion(pool: Sign[], signNumber?: Sign['number']): Ques
     const selectedSign: Sign = pool.find(sign => sign.number === signNumber)!;
     question = createSignQuestion(selectedSign);
   } else {
-    question = createQuestion(pool, createSignQuestion);
+    question = createSignQuestion(getRndElement(pool));
   }
 
   const answerKey = question.signQuestionType === SignQuestionTypes.KeyToTitle ? 'title' : 'number';
   const availableSigns = question.skip.length ? pool.filter(sign => !question.skip.includes(sign.number)) : pool;
-  return populateAnswers(question, availableSigns, answerKey);
+  const availablePool = availableSigns.filter(el => el.number !== question.number);
+  return populateAnswers(question, availablePool, answerKey);
 }

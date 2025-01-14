@@ -81,7 +81,7 @@
         </swiper-slide>
       </swiper-container>
     </ClientOnly>
-    <div class="grid gap-3 mt-10">
+    <div class="grid gap-3 mt-5">
       <TheButton
         v-if="canGoNext"
         class="bg-blue-400 text-white border-none"
@@ -121,7 +121,7 @@ import {
 import { QuestionTypes } from '~/domain/Question';
 import { getAnswerImage, getQuestionImage } from '~/utils';
 
-const MAX_QUESTIONS = 10;
+const MAX_QUESTIONS = 2;
 
 const route = useRoute();
 const header = useState('header');

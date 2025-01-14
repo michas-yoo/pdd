@@ -2,7 +2,10 @@
   <main class="min-h-dvh bg-white">
     <header
       v-if="canShowHeader"
-      :class="['fixed left-0 top-0 w-full border-b bg-white p-2 text-center', 'flex items-center justify-between']"
+      :class="[
+        'fixed left-0 top-0 w-full border-b bg-white p-2 text-center z-10',
+        'flex items-center justify-between'
+      ]"
     >
       <button class="rounded-md border px-4 py-3" @click="navigateTo(header.link)">⬅️️</button>
       <h1 class="heading-1 !mb-0">{{ header.title }}</h1>
